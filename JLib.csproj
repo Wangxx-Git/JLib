@@ -35,6 +35,10 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite, Version=1.0.82.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\System.Data.SQLite.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
@@ -49,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DBOperator\MSSQLHelper.cs" />
+    <Compile Include="DBOperator\SqliteHelper.cs" />
     <Compile Include="Extension\DataTableExtension.cs" />
     <Compile Include="Extension\DateTimeExtension.cs" />
     <Compile Include="Extension\EnumExtension.cs" />
