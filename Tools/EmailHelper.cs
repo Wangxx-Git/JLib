@@ -18,7 +18,7 @@ namespace JLib.Tools
         /// <param name="host"></param>
         /// <param name="from"></param>
         /// <param name="pwd"></param>
-        public static void SendMail(string to, string title, string content, string fromName = "悦风网", string host = "smtp.qq.com", string from = "cgrjerry@qq.com", string pwd = "cgr372..")
+        public static void SendMail(string to, string title, string content, string fromName = "悦风网", string host = "smtp.qq.com", string from = "cgrjerry@qq.com", string pwd = "")
         {
             MailAddress fromAddress = new MailAddress(from, fromName); //邮件的发件人
             MailMessage mail = new MailMessage();

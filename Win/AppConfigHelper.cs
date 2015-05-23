@@ -2,34 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace JLib.Win
 {
     public class AppConfigHelper
     {
         /// <summary>
-        /// 更新App.config中，key对应的value
+        /// WinForm更新App.config中，key对应的value，没有则添加
         /// </summary>
-        /// <param name="AppKey">key</param>
-        /// <param name="AppValue">value</param>
-        public static void SetValue(string AppKey, string AppValue)
+        /// <param name="appKey">key</param>
+        /// <param name="appValue">value</param>
+        public static void SetValue(string appKey, string appValue)
         {
-            System.Xml.XmlDocument xDoc = new System.Xml.XmlDocument();
+            var xDoc = new System.Xml.XmlDocument();
             xDoc.Load(System.Windows.Forms.Application.ExecutablePath + ".config");
 
-            System.Xml.XmlNode xNode;
-            System.Xml.XmlElement xElem1;
-            System.Xml.XmlElement xElem2;
-            xNode = xDoc.SelectSingleNode("//appSettings");
-
-            xElem1 = (System.Xml.XmlElement)xNode.SelectSingleNode("//add[@key='" + AppKey + "']");
-            if (xElem1 != null) xElem1.SetAttribute("value", AppValue);
-            else
+            var xNode = xDoc.SelectSingleNode("//appSettings");
+            if (xNode != null)
             {
-                xElem2 = xDoc.CreateElement("add");
-                xElem2.SetAttribute("key", AppKey);
-                xElem2.SetAttribute("value", AppValue);
-                xNode.AppendChild(xElem2);
+                var xElem1 = (System.Xml.XmlElement)xNode.SelectSingleNode("//add[@key='" + appKey + "']");
+                if (xElem1 != null) xElem1.SetAttribute("value", appValue);
+                else
+                {
+                    var xElem2 = xDoc.CreateElement("add");
+                    xElem2.SetAttribute("key", appKey);
+                    xElem2.SetAttribute("value", appValue);
+                    xNode.AppendChild(xElem2);
+                }
             }
             xDoc.Save(System.Windows.Forms.Application.ExecutablePath + ".config");
         }

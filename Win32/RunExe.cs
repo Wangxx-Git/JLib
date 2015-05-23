@@ -8,6 +8,11 @@ namespace JLib.Win32
 {
     public class RunExe
     {
+        /// <summary>
+        /// 执行运行命令
+        /// </summary>
+        /// <param name="exe">EXE名</param>
+        /// <param name="arg">参数</param>
         public static void ExcuteProcess(string exe, string arg)
         {
             using (var p = new Process())

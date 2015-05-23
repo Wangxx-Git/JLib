@@ -14,7 +14,7 @@ namespace JLib.IO
         /// <param name="path">文件绝对路径</param>
         /// <param name="en">编码方式</param>
         /// <returns></returns>
-        public static string GetTxtToEnd(string path,Encoding en)
+        public static string GetTxtToEnd(string path, Encoding en)
         {
             FileStream fs = new FileStream(path, FileMode.Open);
             StreamReader sr = new StreamReader(fs, en);
@@ -24,14 +24,13 @@ namespace JLib.IO
             return res;
         }
 
-
-       /// <summary>
-       /// 向文本文件里面写内容
-       /// </summary>
-       /// <param name="path">文件路径</param>
-       /// <param name="txt">文本内容</param>
+        /// <summary>
+        /// 向文本文件里面写内容
+        /// </summary>
+        /// <param name="path">文件路径</param>
+        /// <param name="txt">文本内容</param>
         /// <param name="en">编码方式</param>
-        public static void SetTxt(string path,string txt, Encoding en)
+        public static void SetTxt(string path, string txt, Encoding en)
         {
             FileStream fs = new FileStream(path, FileMode.Create);
             StreamWriter sw = new StreamWriter(fs, en);
@@ -40,9 +39,6 @@ namespace JLib.IO
             sw.Close();
             fs.Close();
         }
-
-
-        
 
     }
 }

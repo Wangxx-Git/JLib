@@ -13,7 +13,7 @@ namespace JLib.Win
     public class Boot
     {
         //开机启动
-        public static void setStart(string name,string ExePath)
+        public static void SetStart(string name,string ExePath)
         {
             RegistryKey HKCU = Registry.CurrentUser;
             RegistryKey Run = HKCU.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
@@ -29,7 +29,7 @@ namespace JLib.Win
         }
 
         //开机不启动
-        public static void cancelStart(string name)
+        public static void CancelStart(string name)
         {
             RegistryKey HKCU = Registry.CurrentUser;
             RegistryKey Run = HKCU.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
