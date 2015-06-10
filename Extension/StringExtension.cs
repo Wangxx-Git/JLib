@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using System.IO;
+using JLib.API;
 
 namespace JLib.Extension
 {
@@ -140,7 +141,7 @@ namespace JLib.Extension
         /// <returns></returns>
         public static bool IsIDCard(this string oldStr)
         {
-            return Regex.IsMatch(oldStr, @"^(^\d{18}$)|(^\d{15}$)");
+            return Regex.IsMatch(oldStr, @"^\d{17}(\d|x)$");
         }
 
         /// <summary>
@@ -151,6 +152,51 @@ namespace JLib.Extension
         public static bool IsMobile(this string oldStr)
         {
             return Regex.IsMatch(oldStr, @"(^189\d{8}$)|(^13\d{9}$)|(^15\d{9}$)");
+        }
+
+        /// <summary>
+        /// 名称：CheckPassPortChina
+        /// 功能：检查中国公民身份证是否正确
+        /// </summary>
+        /// <param name="cid">需检查的身份证号码</param>
+        /// <returns>返回由省市，生日，性别组成的字符串</returns>
+        public static ResponseData<bool> IsAbsoluteIdCard(this string cid)
+        {
+            var aCity = new string[] { null, null, null, null, null, null, null, null, null, null, null, "北京", "天津", "河北", "山西", "内蒙古", null, null, null, null, null, "辽宁", "吉林", "黑龙江", null, null, null, null, null, null, null, "上海", "江苏", "浙江", "安微", "福建", "江西", "山东", null, null, null, "河南", "湖北", "湖南", "广东", "广西", "海南", null, null, null, "重庆", "四川", "贵州", "云南", "西藏", null, null, null, null, null, null, "陕西", "甘肃", "青海", "宁夏", "新疆", null, null, null, null, null, "台湾", null, null, null, null, null, null, null, null, null, "香港", "澳门", null, null, null, null, null, null, null, null, "国外" };
+            double iSum = 0;
+            var info = "";
+            var rg = new System.Text.RegularExpressions.Regex(@"^\d{17}(\d|x)$");
+            System.Text.RegularExpressions.Match mc = rg.Match(cid);
+            if (!mc.Success)
+            {
+                return new ResponseData<bool> { Code = -1, Data = false, ErrMsg = "身份证格式" }; ;
+            }
+            cid = cid.ToLower();
+            cid = cid.Replace("x", "a");
+            if (aCity[int.Parse(cid.Substring(0, 2))] == null)
+            {
+                return new ResponseData<bool> { Code = -1, Data = false, ErrMsg = "非法地区" };
+            }
+            try
+            {
+                DateTime.Parse(cid.Substring(6, 4) + "-" + cid.Substring(10, 2) + "-" + cid.Substring(12, 2));
+            }
+            catch
+            {
+                return new ResponseData<bool> { Code = -1, Data = false, ErrMsg = "非法生日" }; 
+            }
+            for (int i = 17; i >= 0; i--)
+            {
+                iSum += (System.Math.Pow(2, i) % 11) * int.Parse(cid[17 - i].ToString(), System.Globalization.NumberStyles.HexNumber);
+            }
+            if (iSum % 11 != 1)
+            {
+                return new ResponseData<bool> { Code = -1, Data = false, ErrMsg = "非法证号" }; 
+            }
+
+            var data = aCity[int.Parse(cid.Substring(0, 2))] + "," + cid.Substring(6, 4) + "-" + cid.Substring(10, 2) +
+                       "-" + cid.Substring(12, 2) + "," + (int.Parse(cid.Substring(16, 1))%2 == 1 ? "男" : "女");
+            return new ResponseData<bool> { Code = 0, Data = true, ErrMsg = data }; 
         }
         #endregion
         
@@ -392,7 +438,6 @@ namespace JLib.Extension
 
         }
 
-
         /// <summary>
         /// DES解密,解密失败返回源串
         /// </summary>
@@ -405,7 +450,6 @@ namespace JLib.Extension
             string iv = key;
             return DesDecrypt(code, key, iv);
         }
-
 
         /// <summary>
         /// DES解密

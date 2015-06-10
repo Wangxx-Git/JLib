@@ -16,9 +16,9 @@ namespace JLib.IO
         /// <returns></returns>
         public static string GetTxtToEnd(string path, Encoding en)
         {
-            FileStream fs = new FileStream(path, FileMode.Open);
-            StreamReader sr = new StreamReader(fs, en);
-            string res = sr.ReadToEnd();
+            var fs = new FileStream(path, FileMode.Open);
+            var sr = new StreamReader(fs, en);
+            var res = sr.ReadToEnd();
             sr.Close();
             fs.Close();
             return res;

@@ -55,6 +55,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\PaginationDTO.cs" />
+    <Compile Include="API\ResponseData.cs" />
+    <Compile Include="API\TextValue.cs" />
+    <Compile Include="Config\AppConfig.cs" />
+    <Compile Include="Config\WebConfig.cs" />
     <Compile Include="DBOperator\MSSQLHelper.cs" />
     <Compile Include="DBOperator\SqliteHelper.cs" />
     <Compile Include="Extension\DataTableExtension.cs" />
@@ -71,9 +76,6 @@
     <Compile Include="Tools\Logs.cs" />
     <Compile Include="Media\Imager.cs" />
     <Compile Include="Maths\BigInteger.cs" />
-    <Compile Include="Serving\IPS.cs" />
-    <Compile Include="Serving\IPSS.cs" />
-    <Compile Include="Settings.cs" />
     <Compile Include="Tools\EmailHelper.cs" />
     <Compile Include="Tools\Json.cs" />
     <Compile Include="Tools\WSHelper.cs" />
@@ -85,12 +87,7 @@
     <Compile Include="Web\PageToHtml.cs" />
     <Compile Include="Web\UrlHelper.cs" />
     <Compile Include="Win32\RunExe.cs" />
-    <Compile Include="Win\AppConfigHelper.cs" />
     <Compile Include="Win\Boot.cs" />
-    <Compile Include="Wpf\Controls.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Plugins\System.Data.SQLite.dll" />

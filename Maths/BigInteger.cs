@@ -5,7 +5,7 @@ using System.Text;
 
 namespace JLib.Maths
 {
-    class BigInteger
+    public class BigInteger
     {
         public string valuestr;
         public char[] value = new char[101];

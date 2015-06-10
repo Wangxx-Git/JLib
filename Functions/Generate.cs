@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -11,26 +12,27 @@ namespace JLib.Functions
     public class Generate
     {
         /// <summary>
-        /// 生成一串随机数字,默认6位，最长32位
+        /// 生成一串随机数字,默认6位，最长9位
         /// </summary>
         /// <param name="length">生成长度</param>
         /// <returns>string</returns>
-        public static string GenerateRandomNumber(int length=6)
+        public static int GenerateRandomNumber(int length=6)
         {
-            string temp = System.Guid.NewGuid().ToString("N");
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < length; i++)
+            var start = new StringBuilder("1");
+            var end = new StringBuilder("9");
+
+            if (length > 9) return -1;
+
+            for (var i = 1; i < length; i++)
             {
-                if (Convert.ToChar(temp.Substring(i, 1)) > '9')
-                {
-                    sb.Append(OneRandomNumber());
-                }
-                else
-                {
-                    sb.Append(temp.Substring(i, 1));
-                }
+                start.Append("0");
+                end.Append("9");
             }
-            return sb.ToString();
+
+            var vmin = Convert.ToInt32(start.ToString());
+            var vmax = Convert.ToInt32(end.ToString());
+
+            return new Random().Next(vmin, vmax);
         }
 
         /// <summary>
@@ -39,8 +41,8 @@ namespace JLib.Functions
         /// <returns></returns>
         public static int OneRandomNumber()
         {
-            Random rand = new Random();
-            int i = rand.Next(10);
+            var rand = new Random();
+            var i = rand.Next(10);
             return i;
         }
 

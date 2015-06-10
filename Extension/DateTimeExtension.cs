@@ -8,14 +8,16 @@ namespace JLib.Extension
     public static class DateTimeExtension
     {
         /// <summary>
-        /// 扩展方法：根据分隔将DateTime转化成文件夹的名字
+        /// 扩展方法：根据分隔将DateTime转化成标准可识别的格式
         /// </summary>
         /// <param name="dt">要转换的DateTime</param>
         /// <param name="spite">分隔线,默认为："-"</param>
+        /// <param name="withTime">是否显示时间</param>
         /// <returns>文件夹的名字</returns>
-        public static string ToDirNameString(this DateTime dt, string spite = "-")
+        public static string ToStdStr(this DateTime dt, bool withTime = false, string spite = "-")
         {
-            string res = dt.Year + spite + dt.Month + spite + dt.Day;
+            var res = dt.ToString("yyyy" + spite + "MM" + spite + "dd");
+            res += withTime ? " " + dt.ToShortTimeString() : string.Empty;
             return res;
         }
     }

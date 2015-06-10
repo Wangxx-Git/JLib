@@ -1,35 +1,65 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Web.UI.WebControls;
+using JLib.API;
 
 namespace JLib.Extension
 {
     public static class EnumExtension
     {
+       
+
         /// <summary>
-        /// 扩展方法：获取当前枚举的描述
+        /// 扩展方法：根据值获取描述
+        /// </summary>
+        /// <returns></returns>
+        public static string GetDesc<T>(this int value)
+        {
+            var list = Enum.GetValues(typeof (T));
+            foreach (var item in list.Cast<Enum>().Where(item => item.GetHashCode() == value))
+                return item.Description();
+            return "";
+        }
+
+        /// <summary>
+        /// 静态方法：获取枚举键值列表(可用于下拉框)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static List<TextValue> EnumToList<T>(bool addAll=false)
+        {
+            var list = (from Enum type in Enum.GetValues(typeof (T))
+                        select new TextValue { Value = type.GetHashCode(), Text = type.Description() }).ToList();
+            if (addAll) list.Insert(0, new TextValue{Value = 0,Text = "所有"});
+            return list;
+        }
+
+        /// <summary>
+        /// 私有方法：获取当前枚举的描述
         /// </summary>
         /// <param name="temp"></param>
         /// <returns></returns>
-        public static string GetDescription(this Enum temp)
+        private static string Description(this Enum temp)
         {
-            Type enumType = temp.GetType();
+            var enumType = temp.GetType();
             try
             {
                 var fieldInfo = enumType.GetField(temp.ToString());
                 var attr =
                     Attribute.GetCustomAttribute(fieldInfo, typeof(DescriptionAttribute), false) as
                         DescriptionAttribute;
-                if (attr != null) return attr.Description;
-                return "无枚举描述";
-
+                return attr != null ? attr.Description : "";
             }
             catch (Exception)
             {
-                return "无枚举描述";
+                return "";
             }
         }
+
     }
 }

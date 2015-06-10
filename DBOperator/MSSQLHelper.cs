@@ -10,27 +10,23 @@ namespace JLib.DBOperator
 {
     public class MSSQLHelper
     {
-        public string connStr;
-        SqlConnection conn;
+        public string ConnStr;
+        SqlConnection _conn;
 
-        private static MSSQLHelper m_instance = null;
+        private static MSSQLHelper _mInstance = null;
         private MSSQLHelper()
         {
-            connStr = System.Configuration.ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString.ToString();
+            ConnStr = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString.ToString();
         }
-        public static MSSQLHelper getInstance()
+        public static MSSQLHelper GetInstance()
         {
-            if (m_instance == null)
-            {
-                m_instance = new MSSQLHelper();
-            }
-            return m_instance;
+            return _mInstance ?? (_mInstance = new MSSQLHelper());
         }
 
         /// <summary>
         /// 执行无返回值的SQL语句
         /// </summary>
-        /// <param name="SQLString">SQL语句</param>
+        /// <param name="sql">SQL语句</param>
         /// <returns></returns>
         public void ExeSql(string sql)
         {
@@ -40,19 +36,12 @@ namespace JLib.DBOperator
             * SqlCommand 的方法生成 SqlException，那么当严重级别小于等于 19 时，
             * SqlConnection 将仍保持打开状态。当严重级别大于等于 20 时，
             * 服务器通常会关闭 SqlConnection。但是，用户可以重新打开连接并继续*/
-            using (conn = new SqlConnection(connStr))
+            using (_conn = new SqlConnection(ConnStr))
             {
-                conn.Open();
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                _conn.Open();
+                using (var cmd = new SqlCommand(sql, _conn))
                 {
-                    try
-                    {
-                        cmd.ExecuteNonQuery();
-                    }
-                    catch (System.Data.SqlClient.SqlException e)
-                    {
-                        throw e;
-                    }
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
@@ -60,24 +49,17 @@ namespace JLib.DBOperator
         /// <summary>
         /// 执行查询语句，返回SqlDataReader ( 注意：调用该方法后，一定要对SqlDataReader进行Close )
         /// </summary>
-        /// <param name="strSQL">查询语句</param>
+        /// <param name="sql">查询语句</param>
         /// <returns>SqlDataReader</returns>
         public SqlDataReader ExeReader(string sql)
         {
-            using (conn = new SqlConnection(connStr))
+            using (_conn = new SqlConnection(ConnStr))
             {
-                conn.Open();
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                _conn.Open();
+                using (var cmd = new SqlCommand(sql, _conn))
                 {
-                    try
-                    {
-                        SqlDataReader myReader = cmd.ExecuteReader();
-                        return myReader;
-                    }
-                    catch (System.Data.SqlClient.SqlException e)
-                    {
-                        throw e;
-                    }
+                    var myReader = cmd.ExecuteReader();
+                    return myReader;
                 }
             }
         }
@@ -89,20 +71,13 @@ namespace JLib.DBOperator
         /// <returns>记录条数</returns>
         public int ExeScr(string sql)
         {
-            using (conn = new SqlConnection(connStr))
+            using (_conn = new SqlConnection(ConnStr))
             {
-                conn.Open();
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                _conn.Open();
+                using (var cmd = new SqlCommand(sql, _conn))
                 {
-                    try
-                    {
-                        int scr = (int)cmd.ExecuteScalar();
-                        return scr;
-                    }
-                    catch (System.Data.SqlClient.SqlException e)
-                    {
-                        throw e;
-                    }
+                    var scr = (int)cmd.ExecuteScalar();
+                    return scr;
                 }
             }
         }
@@ -110,20 +85,20 @@ namespace JLib.DBOperator
         /// <summary>
         /// 执行查询语句，返回DataSet
         /// </summary>
-        /// <param name="SQLString">查询语句</param>
+        /// <param name="sql">查询语句</param>
         /// <returns>DataSet</returns>
         public DataSet ExeDS(string sql)
         {
-            using (conn = new SqlConnection(connStr))
+            using (_conn = new SqlConnection(ConnStr))
             {
-                conn.Open();
-                DataSet ds = new DataSet();
+                _conn.Open();
+                var ds = new DataSet();
                 try
                 {
-                    SqlDataAdapter command = new SqlDataAdapter(sql, conn);
+                    var command = new SqlDataAdapter(sql, _conn);
                     command.Fill(ds, "ds");
                 }
-                catch (System.Data.SqlClient.SqlException ex)
+                catch (SqlException ex)
                 {
                     throw new Exception(ex.Message);
                 }
@@ -138,16 +113,16 @@ namespace JLib.DBOperator
         /// <returns>DataTable</returns>
         public DataTable ExeDt(string sql)
         {
-            using (conn = new SqlConnection(connStr))
+            using (_conn = new SqlConnection(ConnStr))
             {
-                conn.Open();
-                DataTable dt = new DataTable();
+                _conn.Open();
+                var dt = new DataTable();
                 try
                 {
-                    SqlDataAdapter command = new SqlDataAdapter(sql, conn);
+                    var command = new SqlDataAdapter(sql, _conn);
                     command.Fill(dt);
                 }
-                catch (System.Data.SqlClient.SqlException ex)
+                catch (SqlException ex)
                 {
                     throw new Exception(ex.Message);
                 }
@@ -162,13 +137,12 @@ namespace JLib.DBOperator
         /// <returns>DataTable</returns>
         public DataTable ExeProcWithNonParam(string procName)
         {
-            using (conn = new SqlConnection(connStr))
+            using (_conn = new SqlConnection(ConnStr))
             {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand(procName, conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                DataSet ds = new DataSet();
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                _conn.Open();
+                var cmd = new SqlCommand(procName, _conn) {CommandType = CommandType.StoredProcedure};
+                var ds = new DataSet();
+                var da = new SqlDataAdapter(cmd);
                 da.Fill(ds);
                 return ds.Tables[0];
             }
@@ -182,11 +156,10 @@ namespace JLib.DBOperator
         /// <returns>影响行数</returns>
         public int ExeProcWithParams(string procName, Dictionary<string, string> param)
         {
-            using (conn = new SqlConnection(connStr))
+            using (_conn = new SqlConnection(ConnStr))
             {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand(procName, conn);
-                cmd.CommandType = CommandType.StoredProcedure;
+                _conn.Open();
+                var cmd = new SqlCommand(procName, _conn) {CommandType = CommandType.StoredProcedure};
                 foreach (var item in param)
                 {
                     cmd.Parameters.Add(new SqlParameter("@" + item.Key, item.Value));
@@ -204,18 +177,17 @@ namespace JLib.DBOperator
         /// <returns>查询数据</returns>
         public DataTable ExeProcWithParamsAndReturns(string procName, Dictionary<string, string> param)
         {
-            using (conn = new SqlConnection(connStr))
+            using (_conn = new SqlConnection(ConnStr))
             {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand(procName, conn);
-                cmd.CommandType = CommandType.StoredProcedure;
+                _conn.Open();
+                var cmd = new SqlCommand(procName, _conn) {CommandType = CommandType.StoredProcedure};
                 foreach (var item in param)
                 {
                     cmd.Parameters.Add(new SqlParameter("@" + item.Key, item.Value));
                 }
 
-                DataSet ds = new DataSet();
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                var ds = new DataSet();
+                var da = new SqlDataAdapter(cmd);
                 da.Fill(ds);
                 return ds.Tables[0];
             }
